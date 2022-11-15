@@ -17,10 +17,6 @@ on:
           - major
           - patch
           - beta
-      version:
-        description: 'Select the release version'
-        required: false
-        type: string
 
 jobs:
 
