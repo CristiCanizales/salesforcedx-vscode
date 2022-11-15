@@ -89,10 +89,10 @@ jobs:
         with:
           payload: |
             {
-              "text": "Release branch v${{ needs.create_branch.outputs.version }} unsuccessfully created",
-              "event": "Create Release Branch, run: ${{ github.event.workflow_run.html_url }}",
+              "text": "Release branch v${{ needs.create_branch.outputs.version }} type ${{ needs.create_branch.outputs.release_type }} successfully created",
+              "event": "${{ github.event.repository.html_url }}/branches/${{ needs.create_branch.outputs.branch }}",
               "repo": "${{ github.event.repository.name }}",
-              "result": "Failure"
+              "result": "Success"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.VSCODE_SLACK_WEBHOOK }}
