@@ -54,8 +54,8 @@ jobs:
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch ${releaseBranchName}"
         echo "branch=rama" >> $GITHUB_OUTPUT
         echo "version=${nextVersion}" >> $GITHUB_OUTPUT
-    - run: echo “Release Version is ${{ steps.create_step.outputs.version }}”
-    - run: echo “Release Version is ${{ steps.create_step.outputs.branch }}”
+    # - run: echo “Release Version is ${{ steps.create_step.outputs.version }}”
+    # - run: echo “Release Branch is ${{ steps.create_step.outputs.branch }}”
   notification_on_success:
     needs: create_branch
     runs-on: ubuntu-latest
