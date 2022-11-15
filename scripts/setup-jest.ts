@@ -28,12 +28,17 @@ const getMockVSCode = () => {
       };
       public dispose = () => {};
     },
+    TreeItem: jest.fn(),
     commands: jest.fn(),
     Disposable: jest.fn(),
     env: {
       machineId: '12345534'
     },
-    EventEmitter: EventEmitter,
+    EventEmitter,
+    ExtensionMode: { Production: 1, Development: 2, Test: 3 },
+    languages: {
+      createDiagnosticCollection: jest.fn()
+    },
     Uri: {
       parse: jest.fn(),
       file: jest.fn()
@@ -62,7 +67,12 @@ const getMockVSCode = () => {
         };
       },
       onDidChangeConfiguration: jest.fn(),
-      createFileSystemWatcher: jest.fn()
+      createFileSystemWatcher: jest.fn().mockReturnValue({
+        onDidChange: jest.fn(),
+        onDidCreate: jest.fn(),
+        onDidDelete: jest.fn()
+      }),
+      workspaceFolders: []
     }
   };
 };
