@@ -54,7 +54,7 @@ jobs:
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch ${releaseBranchName}"
         node scripts/create-release-branch.js
         echo "branch=rama" >> $GITHUB_OUTPUT
-        echo "version=${nextVersion}" >> $GITHUB_OUTPUT
+        echo "version=nextVersion" >> $GITHUB_OUTPUT
     - run: echo “Release Version is ${{ steps.create_step.outputs.version }}”
     - run: echo “Release Branch is ${{ steps.create_step.outputs.branch }}”
   notification_on_success:
