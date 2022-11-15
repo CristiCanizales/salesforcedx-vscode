@@ -44,15 +44,14 @@ jobs:
     - uses: ./.github/actions/gitConfig
       with:
         email: ${{ secrets.GH_EMAIL }}
-    - name: Set NPM at the correct version for Lerna
-      run: npm install -g npm@8.12.1
-    - run: npm ci
-    - run: npm install -g shelljs && npm install -g lerna
+    # - name: Set NPM at the correct version for Lerna
+    #   run: npm install -g npm@8.12.1
+    # - run: npm ci
+    # - run: npm install -g shelljs && npm install -g lerna
     - name: Create and Push the Release Branch
       id: create_step
       run: |
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch ${releaseBranchName}"
-        node scripts/create-release-branch.js
         echo "::set-output name=branch::"${releaseBranchName}""
         echo "version=nextVersion" >> $GITHUB_OUTPUT
     - run: echo “Release Version is ${{ steps.create_step.outputs.version }}”
