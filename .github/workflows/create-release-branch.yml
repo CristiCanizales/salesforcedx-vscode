@@ -17,6 +17,10 @@ on:
           - major
           - patch
           - beta
+      version:
+        description: 'Select the release version'
+        required: false
+        type: string
 
 jobs:
 
@@ -24,11 +28,13 @@ jobs:
     name: 'Create Branch'
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.create_step.outputs.version }}
+      version: ${{ github.event.inputs.version }}
       release_type: ${{ github.event.inputs.releaseType || 'minor' }}
-      branch: ${{ steps.create_step.outputs.branch }}
+      branch: release/v${{ github.event.inputs.version }}
     env:
       RELEASE_TYPE: ${{ github.event.inputs.releaseType || 'minor' }}
+      nextVersion: ${{ github.event.inputs.version }}
+      releaseBranch: release/v${{ github.event.inputs.version }}
 
     steps:
     - name: Setup Node.js
@@ -51,12 +57,11 @@ jobs:
     - name: Create and Push the Release Branch
       id: create_step
       run: |
-        echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch ${releaseBranchName}"
+        echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch release/v${{ github.event.inputs.version }}"
         node scripts/create-release-branch.js
-        echo "branch=rama" >> $GITHUB_OUTPUT
-        echo "version=nextVersion" >> $GITHUB_OUTPUT
-    - run: echo “Release Version is ${{ steps.create_step.outputs.version }}”
-    - run: echo “Release Branch is ${{ steps.create_step.outputs.branch }}”
+    - run: echo “Release Version is ${{ env.RELEASE_TYPE }}”
+    - run: echo “Release Branch is ${{ env.version }}”
+    - run: echo “Release Branch is ${{ env.releaseBranch }}”
   notification_on_success:
     needs: create_branch
     runs-on: ubuntu-latest
