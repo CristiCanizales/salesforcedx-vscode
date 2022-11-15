@@ -53,8 +53,8 @@ jobs:
       run: |
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch ${releaseBranchName}"
         node scripts/create-release-branch.js
+        echo "::set-output name=branch::${releaseBranchName}"
         echo "version=nextVersion" >> $GITHUB_OUTPUT
-        echo "branch=rama" >> $GITHUB_OUTPUT
   notification_on_success:
     needs: create_branch
     runs-on: ubuntu-latest
