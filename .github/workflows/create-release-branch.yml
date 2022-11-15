@@ -24,9 +24,9 @@ jobs:
     name: 'Create Branch'
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ github.event.inputs.version }}
+      version: ${{ steps.create_step.outputs.version }}
       release_type: ${{ github.event.inputs.releaseType || 'minor' }}
-      branch: release/v${{ github.event.inputs.version }}
+      branch: ${{ steps.create_step.outputs.branch }}
     env:
       RELEASE_TYPE: ${{ github.event.inputs.releaseType || 'minor' }}
       nextVersion: ${{ github.event.inputs.version }}
@@ -55,9 +55,14 @@ jobs:
       run: |
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch release/v${{ github.event.inputs.version }}"
         node scripts/create-release-branch.js
-    - run: echo “Release Version is ${{ env.RELEASE_TYPE }}”
-    - run: echo “Release Branch is ${{ env.version }}”
-    - run: echo “Release Branch is ${{ env.releaseBranch }}”
+    - id: getVersion
+      run: |
+        echo "version="$(node -pe "require('./packages/salesforcedx-vscode/package.json').version")"" >> $GITHUB_OUTPUT
+        echo "branch="release/v$(node -pe "require('./packages/salesforcedx-vscode/package.json').version")"" >> $GITHUB_OUTPUT
+    - run: echo "Release Version is ${{ steps.getVersion.outputs.version }}"
+    - run: echo “Release type is ${{ github.event.inputs.releaseType || 'minor' }}”
+    - run: echo “Release Branch is release/v${{ steps.getVersion.outputs.version }}”
+
   notification_on_success:
     needs: create_branch
     runs-on: ubuntu-latest
