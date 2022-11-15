@@ -24,13 +24,11 @@ jobs:
     name: 'Create Branch'
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.create_step.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
       release_type: ${{ github.event.inputs.releaseType || 'minor' }}
-      branch: ${{ steps.create_step.outputs.branch }}
+      branch: ${{ steps.version.outputs.branch }}
     env:
       RELEASE_TYPE: ${{ github.event.inputs.releaseType || 'minor' }}
-      nextVersion: ${{ github.event.inputs.version }}
-      releaseBranch: release/v${{ github.event.inputs.version }}
 
     steps:
     - name: Setup Node.js
@@ -55,13 +53,13 @@ jobs:
       run: |
         echo "Creating a ${{ github.event.inputs.releaseType || 'minor' }} release from branch release/v${{ github.event.inputs.version }}"
         node scripts/create-release-branch.js
-    - id: getVersion
-      run: |
-        echo "version="$(node -pe "require('./packages/salesforcedx-vscode/package.json').version")"" >> $GITHUB_OUTPUT
-        echo "branch="release/v$(node -pe "require('./packages/salesforcedx-vscode/package.json').version")"" >> $GITHUB_OUTPUT
-    - run: echo "Release Version is ${{ steps.getVersion.outputs.version }}"
+    - id: version
+      run: echo "version="$(node -pe "require('./packages/salesforcedx-vscode/package.json').version")"" >> $GITHUB_OUTPUT
+    - id: branch
+      run: echo "branch=release/v${{ steps.version.outputs.version }}" >> $GITHUB_OUTPUT
+    - run: echo "Release Version is ${{ steps.version.outputs.version }}"
     - run: echo “Release type is ${{ github.event.inputs.releaseType || 'minor' }}”
-    - run: echo “Release Branch is release/v${{ steps.getVersion.outputs.version }}”
+    - run: echo “Release Branch is ${{ steps.branch.outputs.branch }}”
 
   notification_on_success:
     needs: create_branch
@@ -97,5 +95,5 @@ jobs:
               "result": "Failure"
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.IDEE_RELEASE_ALERT_SLACK_WEBHOOK }}
+          SLACK_WEBHOOK_URL: ${{ secrets.VSCODE_SLACK_WEBHOOK }}
 
